@@ -1,0 +1,15 @@
+*.exe
+*.ilk
+*.obj
+*.pdb
+*.out
+*.log
+*.tar.bz2
+*.xlsx
+
+cs/
+en/
+fr/
+gag/
+
+logs/
