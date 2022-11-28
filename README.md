@@ -23,5 +23,12 @@ OpenMP:
     '''
     ./openmpver [path to input file] [# of nodes] -t [# of threads]
     '''
-    
 
+
+
+*Number of nodes*
+
+gag: 2,929
+cs: 655,173
+fr: 2,212,682
+en: 13,593,032
