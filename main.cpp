@@ -39,7 +39,12 @@ int main(int argc, char * argv[])
     std::cout << "number of nodes: " << N << endl;
     std::cout << "nthreads: " << nthreads << endl;   
 
+
     auto start = chrono::high_resolution_clock::now();
+
+    cout << "============================================" << endl;
+    cout << "Starting process..." << endl;
+    cout << "Filling out NodeInfo for each node i...\n" << endl;
 
 
     // Get NodeInfo for each node
@@ -53,19 +58,59 @@ int main(int argc, char * argv[])
     cout << "Total number of non-zeros = " << totalNnz << endl;
     cout << "Sparcity = " << sparcity << endl;
 
+    auto stop = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+    cout << "NodeInfo obtained: duration = " << duration.count() << " ms" << endl;
+    cout << "============================================" << endl;
+    auto pause = stop;
 
     // Create the adjacency matrix from the NodeInfo array
+    cout << "Creating adjacency matrix..." << endl;
     adjM.reserve(N, N, totalNnz);
     createNodeMatrix(&adjM, nodes, oLinks, N);
     // adjM.printMatrix();
     // test_matrix(&adjM);
 
+    stop = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::milliseconds>(stop - pause);
+    cout << "Adjacency matrix created: duration = " << duration.count() << " ms" << endl;
+    cout << "============================================" << endl;
+    pause = stop;
+
+
+    // Creating and initializing page rank vector
+    cout << "Creating and initializing page rank vector..." << endl;
+    flt32 *pgRankV = (flt32 *) malloc(sizeof(flt32) * N);
+    initializePageRankVector(pgRankV, N);
+
+    stop = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::milliseconds>(stop - pause);
+    cout << "Page rank vector created and initialized: duration = " << duration.count() << " ms" << endl;
+    cout << "============================================" << endl;
+    pause = stop;
+
+
+    // Calculate page rank
+    cout << "Calculating page rank..." << endl;
+    flt32 *finalPgRankV = (flt32 *) malloc(sizeof(flt32) * N);
+    memset(finalPgRankV, 0x0, sizeof(flt32)*N);
+    calculatePageRank(&adjM, pgRankV, finalPgRankV, N);
+
+    stop = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::milliseconds>(stop - pause);
+    cout << "Page rank calculated: duration = " << duration.count() << " ms" << endl;
+    cout << "============================================" << endl;
+    pause = stop;
+
+
+
+
+    stop = chrono::high_resolution_clock::now();
+    duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+    cout << "Program done: total duration = " << duration.count() << " ms" << endl;
+    cout << "============================================" << endl;
 
     adjM.tearDown();
-
-    auto stop = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
-    cout << "Duration: " << duration.count() << " ms" << endl;
 
     return EXIT_SUCCESS;
 }

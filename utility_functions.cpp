@@ -84,6 +84,27 @@ void createNodeMatrix(SparseMatrix *adjM, NodeInfo *nodes, uns32 *oLinks, uns32 
     }
 }
 
+void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
+    flt32 baseValue = 1.0 / N;
+
+    #pragma omp parallel
+    {
+        #pragma omp for
+        for (uns32 i = 0; i < N; ++i)
+            pgRnkV[i] = baseValue;
+    }
+}
+
+
+
+
+void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
+
+
+
+
+
+}
 
 
 
@@ -109,6 +130,28 @@ void createNodeMatrix(SparseMatrix *adjM, NodeInfo *nodes, uns32 *oLinks, uns32 
         }
     }
     adjM->ptrs[N] = currNnz;
+}
+
+
+
+void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
+    flt32 baseValue = 1.0 / N;
+    for (uns32 i = 0; i < N; ++i)
+        pgRnkV[i] = baseValue;
+}
+
+
+
+
+
+
+
+void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
+    
+
+
+
+
 }
 
 
