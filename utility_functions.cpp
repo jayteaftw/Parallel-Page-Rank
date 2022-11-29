@@ -110,63 +110,6 @@ void computeInverseIndex(SparseMatrix *A) {
    if(oldVal)
        free(oldVal);
 }
- 
-void sparsematmult(SparseMatrix * A, SparseMatrix * B, SparseMatrix *C) {
-   // computeInverseIndex(B);
-   idx_t numThreads = omp_get_max_threads();
-   accumulatorPerThread accumulator[numThreads];
-   for(idx_t i=0; i<numThreads; ++i) {
-       accumulator[i].accum = (val_t*)calloc(B->ncols, sizeof(val_t));
-       accumulator[i].index = (idx_t*)calloc(B->ncols, sizeof(idx_t));
-   }
-   ansPerRow rowAns[A->nrows];
-   #pragma omp parallel for schedule(dynamic)
-   for(idx_t i=0; i<A->nrows; ++i) {
-       int tid = omp_get_thread_num();
-       for(idx_t j=A->ptrs[i]; j<A->ptrs[i+1]; ++j) {
-           for(idx_t k=B->ptrs[A->inds[j]]; k<B->ptrs[A->inds[j]+1]; ++k) {
-               if(accumulator[tid].accum[B->inds[k]] == 0.0) {
-                   accumulator[tid].index[accumulator[tid].indexFilled] = B->inds[k];
-                   (accumulator[tid].indexFilled)++;
-               }
-               accumulator[tid].accum[B->inds[k]] += A->vals[j]*B->vals[k];
-           }
-       }
-       rowAns[i].size = accumulator[tid].indexFilled;
-       if(rowAns[i].size != 0) {
-           rowAns[i].val = (val_t*)malloc((rowAns[i].size)*sizeof(val_t));
-           rowAns[i].idx = (idx_t*)malloc((rowAns[i].size)*sizeof(idx_t));
-       }
-       for(idx_t j=0; j<rowAns[i].size; ++j) {
-           rowAns[i].val[j] = accumulator[tid].accum[accumulator[tid].index[j]];
-           accumulator[tid].accum[accumulator[tid].index[j]] = 0.0;
-           rowAns[i].idx[j] = accumulator[tid].index[j];
-           accumulator[tid].index[j] = 0;
-       }
-       accumulator[tid].indexFilled = 0;
-   }
-  
-   C->reserve(A->nrows, B->ncols, 0);  
-   for(idx_t i=1; i<C->nrows; ++i)
-       C->ptrs[i] = C->ptrs[i-1]+rowAns[i-1].size;
-   C->ptrs[C->nrows] = 0;
-   C->reserve(A->nrows, B->ncols, C->ptrs[C->nrows-1]+rowAns[C->nrows-1].size);
-   C->ptrs[C->nrows] = C->ptrs[C->nrows-1]+rowAns[C->nrows-1].size;
-  
-   #pragma omp parallel for schedule(dynamic)
-   for(idx_t i=0; i<C->nrows; ++i) {
-       for(idx_t j=0; j<rowAns[i].size; j++) {
-           C->vals[C->ptrs[i]+j] = rowAns[i].val[j];
-           C->inds[C->ptrs[i]+j] = rowAns[i].idx[j];
-       }
-       if(rowAns[i].val)
-           free(rowAns[i].val);
-       rowAns[i].val = nullptr;
-       if(rowAns[i].idx)
-           free(rowAns[i].idx);
-       rowAns[i].idx = nullptr;
-   }
-}
 
 void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
     flt32 baseValue = 1.0 / N;
@@ -179,17 +122,9 @@ void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
     }
 }
 
-
-
-
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
-
-    
-    
     SPARSE_DENSE_MAT_MULT::SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
-
-
-
+    sparsematmult(adjM);
 }
 
 

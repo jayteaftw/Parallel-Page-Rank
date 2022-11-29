@@ -24,4 +24,7 @@
 
 
 void SparseDenseMatMult(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N);
+
+void SparseMatMult(SparseMatrix *M);
+
 #endif
