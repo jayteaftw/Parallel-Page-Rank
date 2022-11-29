@@ -27,7 +27,8 @@ using namespace std;
 #ifdef OPEN_MP_PROJECT
 #include "omp.h"
 
-#elif OPEN_ACC_PROJECT
+#elif defined(OPEN_ACC_PROJECT)
+#include "openacc.h"
 
 #else
 // single threaded

@@ -16,7 +16,7 @@
 #ifdef OPEN_MP_PROJECT
 #include "omp.h"
 
-#elif OPEN_ACC_PROJECT
+#elif defined(OPEN_ACC_PROJECT)
 
 #else
 // single threaded

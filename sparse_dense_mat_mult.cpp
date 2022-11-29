@@ -89,7 +89,7 @@ flt32 matirxErrorandCopyV(flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N){
 
 }
 
-#elif OPEN_ACC_PROJECT
+#elif defined(OPEN_ACC_PROJECT)
 
 void SparseDenseMatMult(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N)
 {

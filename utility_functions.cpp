@@ -70,18 +70,16 @@ void createNodeMatrix(SparseMatrix *adjM, NodeInfo *nodes, uns32 *oLinks, uns32 
     }
 
 
-    #pragma omp parallel
-    {
-        #pragma omp for
-        for (uns32 i = 0; i < N; ++i) {
-            uns32 currIdx = 0;
-            for (uns32 j = adjM->ptrs[i]; j < adjM->ptrs[i+1]; ++j) {
-                uns32 colID = nodes[i][currIdx++];
-                adjM->inds[j] = colID;
-                adjM->vals[j] = 1.0 / oLinks[colID];
-            }
+    #pragma omp parallel for schedule(dynamic)
+    for (uns32 i = 0; i < N; ++i) {
+        uns32 currIdx = 0;
+        for (uns32 j = adjM->ptrs[i]; j < adjM->ptrs[i+1]; ++j) {
+            uns32 colID = nodes[i][currIdx++];
+            adjM->inds[j] = colID;
+            adjM->vals[j] = 1.0 / oLinks[colID];
         }
     }
+
 }
 
 void computeInverseIndex(SparseMatrix *A) {
@@ -114,12 +112,9 @@ void computeInverseIndex(SparseMatrix *A) {
 void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
     flt32 baseValue = 1.0 / N;
 
-    #pragma omp parallel
-    {
-        #pragma omp for
-        for (uns32 i = 0; i < N; ++i)
-            pgRnkV[i] = baseValue;
-    }
+    #pragma omp parallel for schedule(dynamic)
+    for (uns32 i = 0; i < N; ++i)
+        pgRnkV[i] = baseValue;
 }
 
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
@@ -138,9 +133,48 @@ void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, 
 
 
 
-#elif OPEN_ACC_PROJECT
+#elif defined(OPEN_ACC_PROJECT)
 
 
+void createNodeMatrix(SparseMatrix *adjM, NodeInfo *nodes, uns32 *oLinks, uns32 N) {
+    // master thread to figure out how to split up C based on nnzPerRow
+    for (uns32 z = 1; z <= N; ++z) {
+        adjM->ptrs[z] = adjM->ptrs[z-1] + nodes[z-1].size();
+    }
+
+    #pragma acc kernels loop copyin(nodes, oLinks, N) copyout(adjM)
+    for (uns32 i = 0; i < N; ++i) {
+        uns32 currIdx = 0;
+        for (uns32 j = adjM->ptrs[i]; j < adjM->ptrs[i+1]; ++j) {
+            uns32 colID = nodes[i][currIdx++];
+            adjM->inds[j] = colID;
+            adjM->vals[j] = 1.0 / oLinks[colID];
+        }
+    }
+}
+
+
+
+void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
+    flt32 baseValue = 1.0 / N;
+
+    #pragma acc kernels loop copyin(baseValue) copyout(pgRnkV)
+    for (uns32 i = 0; i < N; ++i)
+        pgRnkV[i] = baseValue;
+}
+
+
+
+
+void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
+
+    
+    
+    SPARSE_DENSE_MAT_MULT::SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
+
+
+
+}
 
 
 
