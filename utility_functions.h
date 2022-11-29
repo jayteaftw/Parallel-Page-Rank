@@ -12,6 +12,7 @@
 
 #include "global_types.h"
 #include "sparse_matrix.h"
+#include "sparse_dense_mat_mutl.h"
 
 using namespace std;
 
