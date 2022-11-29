@@ -8,14 +8,15 @@ void SparseDenseMatMult(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV,
 {
     
     //Idx M: Loop throgh adjM->ptrs array
-    #pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for
     for(uns32 i = 0; i < N; i++){
         //Idx V
         for(uns32 j = adjM->ptrs[i]; j < adjM->ptrs[i+1]; j++){
             finPgRnkV[i] += adjM->vals[j] *initPgRnkV[adjM->inds[j]];
-        }        
+        }       
     }
 }
+
 
 void SparseMatMult(SparseMatrix * M) {
     SparseMatrix * A = M;
@@ -71,8 +72,10 @@ void SparseMatMult(SparseMatrix * M) {
         if(rowAns[i].idx)
             free(rowAns[i].idx);
         rowAns[i].idx = nullptr;
+
     }
 }
+
 
 flt32 matirxErrorandCopyV(flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N){
 
