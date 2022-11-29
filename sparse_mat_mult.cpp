@@ -1,4 +1,4 @@
-#include "sparse_dense_mat_mult.h"
+#include "sparse_mat_mult.h"
 
 
 

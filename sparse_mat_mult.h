@@ -1,5 +1,5 @@
-#ifndef SPARSE_DENSE_MAT_MULT
-#define SPARSE_DENSE_MAT_MULT
+#ifndef SPARSE_MAT_MULT
+#define SPARSE_MAT_MULT
 
 #include <cassert>
 #include <stdio.h>
