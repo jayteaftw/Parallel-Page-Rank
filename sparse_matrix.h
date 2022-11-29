@@ -11,6 +11,23 @@
 
 using namespace std;
 
+using idx_t = uns32;
+using val_t = flt32;
+using ptr_t = uns32;
+ 
+struct accumulatorPerThread {
+    val_t* accum;
+    idx_t* index;
+    idx_t indexFilled;
+    accumulatorPerThread() : accum(nullptr), index(nullptr), indexFilled(0) {}
+};
+
+struct ansPerRow {
+    val_t* val;
+    idx_t* idx;
+    idx_t size;
+    ansPerRow() : val(nullptr), idx(nullptr), size(0) {}
+};
 
 class SparseMatrix {
 private:
