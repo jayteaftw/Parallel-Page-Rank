@@ -125,16 +125,15 @@ void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
     flt32 min_error = 0.000001;
     flt32 cur_error = min_error + 1;
-    for(int i =0; i < 10000; i++){
-        
+    for(int i =0; i < 10000; i++){       
         SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
         cur_error = matirxErrorandCopyV(initPgRnkV, finPgRnkV, N);
-
         if (i % 100 == 0)
             cout<<"i:"<<i<<" Error: "<<cur_error<<endl;
         if (cur_error < min_error)
             break;
     }   
+
 }
 
 
