@@ -81,6 +81,7 @@ void SparseMatMult(SparseMatrix * M) {
 flt32 matirxErrorandCopyV(flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N){
 
     flt32 total_error = 0;
+    #pragma omp parallel for
     for(uns32 idx = 0; idx < N; idx++){
         total_error += abs(finPgRnkV[idx] - initPgRnkV[idx]);
         initPgRnkV[idx] = finPgRnkV[idx];
