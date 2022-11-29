@@ -27,7 +27,7 @@ void SparseMatMult(SparseMatrix * M) {
         accumulator[i].accum = (val_t*)calloc(B->ncols, sizeof(val_t));
         accumulator[i].index = (idx_t*)calloc(B->ncols, sizeof(idx_t));
     }
-    ansPerRow rowAns = (ansPerRow*) calloc(A->nrows, sizeof(ansPerRow));
+    ansPerRow* rowAns = (ansPerRow*) calloc(A->nrows, sizeof(ansPerRow));
     #pragma omp parallel for schedule(dynamic)
     for(idx_t i=0; i<A->nrows; ++i) {
         int tid = omp_get_thread_num();

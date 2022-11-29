@@ -9,6 +9,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
+#include <cmath>
 
 
 #include "sparse_matrix.h"
