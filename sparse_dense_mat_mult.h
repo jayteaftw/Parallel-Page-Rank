@@ -12,7 +12,6 @@
 
 
 #include "sparse_matrix.h"
-#include "utility_functions.h"
 
 #ifdef OPEN_MP_PROJECT
 #include "omp.h"

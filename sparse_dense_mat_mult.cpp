@@ -1,4 +1,4 @@
-#include "sparse_dense_mat_mutl.h"
+#include "sparse_dense_mat_mult.h"
 
 
 
@@ -8,7 +8,7 @@ void SparseDenseMatMult(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV,
 {
     
     //Idx M: Loop throgh adjM->ptrs array
-    #pragma omp parallel for collapse(2)
+    #pragma omp parallel for
     for(uns32 i = 0; i < N; i++){
         //Idx V
         for(uns32 j = adjM->ptrs[i]; j < adjM->ptrs[i+1]; j++){
