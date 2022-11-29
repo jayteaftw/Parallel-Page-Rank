@@ -68,7 +68,9 @@ int main(int argc, char * argv[])
     cout << "Creating adjacency matrix..." << endl;
     adjM.reserve(N, N, totalNnz);
     createNodeMatrix(&adjM, nodes, oLinks, N);
-    // adjM.printMatrix();
+    free(oLinks);
+    delete[] nodes;
+    // adjM.printMatrix(25);
     // test_matrix(&adjM);
 
     stop = chrono::high_resolution_clock::now();

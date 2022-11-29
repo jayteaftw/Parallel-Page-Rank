@@ -36,7 +36,7 @@ public:
         return (name.empty() ? "CSR" : name) + "<" + to_string(nrows) + ", " + to_string(ncols) + ", " +
             (ptrs ? to_string(ptrs[nrows]) : "0") + ">";
     }
-    void printMatrix();
+    void printMatrix(uns32 rows=0);
     void tearDown() {
         if (inds) free(inds);
         if (vals) free(vals);

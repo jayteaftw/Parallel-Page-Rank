@@ -40,45 +40,46 @@ void SparseMatrix::allocate(const uns32 r, const uns32 c) {
 }
 
 
-void SparseMatrix::printMatrix() {
+void SparseMatrix::printMatrix(uns32 rows) {
+    if (!rows) rows = nrows;
     printf("=====================================\n");
     printf("Row Pointers: \n");
     printf("  [ ");
-    for (uns32 i = 0; i < nrows+1; ++i) {
+    for (uns32 i = 0; i < rows+1; ++i) {
         printf("%ld ", ptrs[i]);
     }
     printf("]\n");
 
     printf("Column Indices: \n");
     printf("  [ ");
-    for (uns32 i = 0; i < ptrs[nrows]; ++i) {
+    for (uns32 i = 0; i < ptrs[rows]; ++i) {
         printf("%ld ", inds[i]);
     }
     printf("]\n");
 
     printf("Values: \n");
     printf("  [ ");
-    for (uns32 i = 0; i < ptrs[nrows]; ++i) {
+    for (uns32 i = 0; i < ptrs[rows]; ++i) {
         printf("%f ", vals[i]);
     }
     printf("]\n");
 
-    flt32 *currRow = (flt32* ) malloc(sizeof(flt32)*ncols);
-    printf("Dense Matrix Format:\n");
-    for (uns32 i = 0; i < nrows; ++i) {
+    // flt32 *currRow = (flt32* ) malloc(sizeof(flt32)*ncols);
+    // printf("Dense Matrix Format:\n");
+    // for (uns32 i = 0; i < nrows; ++i) {
         
-        memset(currRow, 0x0, sizeof(flt32)*ncols);
+    //     memset(currRow, 0x0, sizeof(flt32)*ncols);
 
-        for (uns32 j = ptrs[i]; j < ptrs[i+1]; ++j) {
-            currRow[inds[j]] = vals[j];
-        }
-        printf("   ");
-        for (uns32 k = 0; k < ncols; ++k) {
-            printf("%f ", currRow[k]);
-        }
-        printf("\n");
-    }
-    free(currRow);
+    //     for (uns32 j = ptrs[i]; j < ptrs[i+1]; ++j) {
+    //         currRow[inds[j]] = vals[j];
+    //     }
+    //     printf("   ");
+    //     for (uns32 k = 0; k < ncols; ++k) {
+    //         printf("%f ", currRow[k]);
+    //     }
+    //     printf("\n");
+    // }
+    // free(currRow);
 
     printf("=====================================\n");
 }
