@@ -22,20 +22,24 @@ void SparseMatMult(SparseMatrix * M) {
     SparseMatrix * A = M;
     SparseMatrix * B = M;
     idx_t numThreads = omp_get_max_threads();
+    idx_t internalNumThreads = 2;
     accumulatorPerThread accumulator[numThreads];
     for(idx_t i=0; i<numThreads; ++i) {
         accumulator[i].accum = (val_t*)calloc(B->ncols, sizeof(val_t));
         accumulator[i].index = (idx_t*)calloc(B->ncols, sizeof(idx_t));
+        accumulator[i].filled = (bool*)calloc(B->ncols, sizeof(bool));
     }
     ansPerRow* rowAns = (ansPerRow*) calloc(A->nrows, sizeof(ansPerRow));
     #pragma omp parallel for schedule(dynamic)
     for(idx_t i=0; i<A->nrows; ++i) {
         int tid = omp_get_thread_num();
+        #pragma omp parallel for num_threads(internalNumThreads)
         for(idx_t j=A->ptrs[i]; j<A->ptrs[i+1]; ++j) {
-            for(idx_t k=B->ptrs[A->inds[j]]; k<B->ptrs[A->inds[j]+1]; ++k) {
-                if(accumulator[tid].accum[B->inds[k]] == 0.0) {
+            for(idx_t k=B->ptrs[A->inds[j]]; k<B->ptrs[(A->inds[j])+1]; ++k) {
+                if(!accumulator[tid].filled[B->inds[k]]) {
                     accumulator[tid].index[accumulator[tid].indexFilled] = B->inds[k];
                     (accumulator[tid].indexFilled)++;
+                    accumulator[tid].filled[B->inds[k]] = true;
                 }
                 accumulator[tid].accum[B->inds[k]] += A->vals[j]*B->vals[k];
             }
@@ -45,6 +49,7 @@ void SparseMatMult(SparseMatrix * M) {
             rowAns[i].val = (val_t*)malloc((rowAns[i].size)*sizeof(val_t));
             rowAns[i].idx = (idx_t*)malloc((rowAns[i].size)*sizeof(idx_t));
         }
+        #pragma omp parallel for num_threads(internalNumThreads)
         for(idx_t j=0; j<rowAns[i].size; ++j) {
             rowAns[i].val[j] = accumulator[tid].accum[accumulator[tid].index[j]];
             accumulator[tid].accum[accumulator[tid].index[j]] = 0.0;
@@ -53,10 +58,10 @@ void SparseMatMult(SparseMatrix * M) {
         }
         accumulator[tid].indexFilled = 0;
     }
+    #pragma omp barrier
     
     for(idx_t i=1; i<M->nrows; ++i)
         M->ptrs[i] = M->ptrs[i-1]+rowAns[i-1].size;
-    M->ptrs[M->nrows] = 0;
     M->reserve(A->nrows, B->ncols, M->ptrs[M->nrows-1]+rowAns[M->nrows-1].size);
     M->ptrs[M->nrows] = M->ptrs[M->nrows-1]+rowAns[M->nrows-1].size;
 
@@ -73,6 +78,7 @@ void SparseMatMult(SparseMatrix * M) {
             free(rowAns[i].idx);
         rowAns[i].idx = nullptr;
     }
+    #pragma omp barrier
     if(rowAns)
         free(rowAns);
 }

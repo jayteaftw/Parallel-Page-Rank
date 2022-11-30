@@ -15,7 +15,7 @@ void SparseMatrix::reserve(const uns32 r, const uns32 c, const uns32 nnz) {
         }
         nrows = r;
     }
-    if(nnz != ptrs[nrows]){
+    if(nnz > ptrs[nrows]){
         if(inds){
             inds = (uns32*) realloc(inds, sizeof(uns32) * nnz);
         } else {

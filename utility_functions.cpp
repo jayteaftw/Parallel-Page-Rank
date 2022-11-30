@@ -130,8 +130,22 @@ void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, 
             break;
         }
     }  
-    
+}
 
+void calculatePageRank2(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
+    flt32 min_error = 0.0001;
+    flt32 cur_error = min_error;
+    for(int i =0; i < 10000; i++){      
+        SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
+        cur_error = matirxErrorandCopyV(initPgRnkV, finPgRnkV, N);
+        cout<<"i:"<<i<<" Error: "<<cur_error<<endl;
+        if (cur_error < min_error){
+            cout<<"i:"<<i<<" Final Error: "<< cur_error <<endl;
+            break;
+        }
+        SparseMatMult(adjM);
+        cout << "SparseMatMult done, nnz = " << adjM->ptrs[adjM->nrows] << endl;
+    }  
 }
 
 #elif defined(OPEN_ACC_PROJECT)

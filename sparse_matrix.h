@@ -18,8 +18,20 @@ using ptr_t = uns32;
 struct accumulatorPerThread {
     val_t* accum;
     idx_t* index;
+    bool* filled;
     idx_t indexFilled;
     accumulatorPerThread() : accum(nullptr), index(nullptr), indexFilled(0) {}
+    ~accumulatorPerThread() {
+        if(accum)
+            free(accum);
+        if(index)
+            free(index);
+        if(filled)
+            free(filled);
+        indexFilled = 0;
+        accum = nullptr;
+        index = nullptr;
+    }
 };
 
 struct ansPerRow {
@@ -27,6 +39,15 @@ struct ansPerRow {
     idx_t* idx;
     idx_t size;
     ansPerRow() : val(nullptr), idx(nullptr), size(0) {}
+    ~ansPerRow() {
+        if(val)
+            free(val);
+        if(idx)
+            free(idx);
+        size = 0;
+        val = nullptr;
+        idx = nullptr;
+    }
 };
 
 class SparseMatrix {
