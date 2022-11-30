@@ -53,13 +53,13 @@ void SparseMatMult(SparseMatrix * M) {
         }
         accumulator[tid].indexFilled = 0;
     }
-  
+    
     for(idx_t i=1; i<M->nrows; ++i)
         M->ptrs[i] = M->ptrs[i-1]+rowAns[i-1].size;
     M->ptrs[M->nrows] = 0;
     M->reserve(A->nrows, B->ncols, M->ptrs[M->nrows-1]+rowAns[M->nrows-1].size);
     M->ptrs[M->nrows] = M->ptrs[M->nrows-1]+rowAns[M->nrows-1].size;
-    
+
     #pragma omp parallel for schedule(dynamic)
     for(idx_t i=0; i<M->nrows; ++i) {
         for(idx_t j=0; j<rowAns[i].size; j++) {
@@ -81,7 +81,7 @@ void SparseMatMult(SparseMatrix * M) {
 flt32 matirxErrorandCopyV(flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N){
 
     flt32 total_error = 0;
-    #pragma omp parallel for
+    #pragma omp parallel for reduction(+:total_error)
     for(uns32 idx = 0; idx < N; idx++){
         total_error += abs(finPgRnkV[idx] - initPgRnkV[idx]);
         initPgRnkV[idx] = finPgRnkV[idx];
