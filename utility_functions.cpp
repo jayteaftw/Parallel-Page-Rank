@@ -163,9 +163,43 @@ void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
 
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
 
+    flt32 min_error = 0.0001;
+    flt32 cur_error = min_error;
+
+    #pragma acc data copy(adjM, initPgRnkV, finPgRnkV)
+    for(int i =0; i < 10000; i++){
+
+        #pragma acc parallel
+        {
+            #pragma acc loop
+            for(uns32 i = 0; i < N; i++){
+                //Idx V
+                for(uns32 j = adjM->ptrs[i]; j < adjM->ptrs[i+1]; j++){
+                    finPgRnkV[i] += adjM->vals[j] *initPgRnkV[adjM->inds[j]];
+                }       
+            }
+
+            //Compute Absolute Error, 
+            //Set initPgRnkV to finPgRnkV, 
+            //and finPgRnkV to zero vector
+            cur_error = 0;
+            #pragma acc loop reduction(+:cur_error)
+            for(uns32 idx = 0; idx < N; idx++){
+                cur_error += abs(finPgRnkV[idx] - initPgRnkV[idx]);
+                initPgRnkV[idx] = finPgRnkV[idx];
+                finPgRnkV[idx] = 0;
+            }
+            
+            if (i % 10 == 0)
+                //cout<<"i:"<<i<<" Error: "<<cur_error<<endl;
+            if (cur_error < min_error){
+                //cout<<"i:"<<i<<" Final Error: "<< cur_error <<endl;
+                i = 10000;
+            }
+        }
+    }  
     
     
-    SPARSE_DENSE_MAT_MULT::SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
 
 
 
