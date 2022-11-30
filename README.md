@@ -21,7 +21,7 @@ OpenMP:
     '''
 
     '''
-    ./openmpver [path to input file] [# of nodes] -t [# of threads]
+    ./openmpver [path to input file] [# of nodes] -t [# of threads] [approach(1-VectorMatrixOnly, 2-MatrixMatrix)]
     '''
 
 
