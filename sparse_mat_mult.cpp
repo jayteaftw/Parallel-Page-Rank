@@ -27,7 +27,6 @@ void SparseMatMult(SparseMatrix * M) {
     for(idx_t i=0; i<numThreads; ++i) {
         accumulator[i].accum = (val_t*)calloc(B->ncols, sizeof(val_t));
         accumulator[i].index = (idx_t*)calloc(B->ncols, sizeof(idx_t));
-        accumulator[i].filled = (bool*)calloc(B->ncols, sizeof(bool));
     }
     ansPerRow* rowAns = (ansPerRow*) calloc(A->nrows, sizeof(ansPerRow));
     #pragma omp parallel for schedule(dynamic)
@@ -36,12 +35,12 @@ void SparseMatMult(SparseMatrix * M) {
         #pragma omp parallel for num_threads(internalNumThreads)
         for(idx_t j=A->ptrs[i]; j<A->ptrs[i+1]; ++j) {
             for(idx_t k=B->ptrs[A->inds[j]]; k<B->ptrs[(A->inds[j])+1]; ++k) {
-                if(!accumulator[tid].filled[B->inds[k]]) {
+                float cur_val = A->vals[j]*B->vals[k];
+                if(accumulator[tid].accum[B->inds[k]] == 0.0 && cur_val != 0.0) {
                     accumulator[tid].index[accumulator[tid].indexFilled] = B->inds[k];
                     (accumulator[tid].indexFilled)++;
-                    accumulator[tid].filled[B->inds[k]] = true;
                 }
-                accumulator[tid].accum[B->inds[k]] += A->vals[j]*B->vals[k];
+                accumulator[tid].accum[B->inds[k]] += cur_val;
             }
         }
         rowAns[i].size = accumulator[tid].indexFilled;

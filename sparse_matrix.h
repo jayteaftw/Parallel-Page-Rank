@@ -18,7 +18,6 @@ using ptr_t = uns32;
 struct accumulatorPerThread {
     val_t* accum;
     idx_t* index;
-    bool* filled;
     idx_t indexFilled;
     accumulatorPerThread() : accum(nullptr), index(nullptr), indexFilled(0) {}
     ~accumulatorPerThread() {
@@ -26,8 +25,6 @@ struct accumulatorPerThread {
             free(accum);
         if(index)
             free(index);
-        if(filled)
-            free(filled);
         indexFilled = 0;
         accum = nullptr;
         index = nullptr;
