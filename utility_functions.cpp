@@ -118,23 +118,23 @@ void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
 }
 
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
-    flt32 min_error = 0.000001;
-    flt32 cur_error = min_error + 1;
-    for(int i =0; i < 10000; i++){       
+    flt32 min_error = 0.0001;
+    flt32 cur_error = min_error;
+    for(int i =0; i < 10000; i++){      
         SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
         cur_error = matirxErrorandCopyV(initPgRnkV, finPgRnkV, N);
         if (i % 100 == 0)
             cout<<"i:"<<i<<" Error: "<<cur_error<<endl;
-        if (cur_error < min_error)
+        if (cur_error < min_error){
+            cout<<"i:"<<i<<" Final Error: "<< cur_error <<endl;
             break;
-    }   
+        }
+    }  
+    
 
 }
 
-
-
 #elif defined(OPEN_ACC_PROJECT)
-
 
 void createNodeMatrix(SparseMatrix *adjM, NodeInfo *nodes, uns32 *oLinks, uns32 N) {
     // master thread to figure out how to split up C based on nnzPerRow
@@ -153,8 +153,6 @@ void createNodeMatrix(SparseMatrix *adjM, NodeInfo *nodes, uns32 *oLinks, uns32 
     }
 }
 
-
-
 void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
     flt32 baseValue = 1.0 / N;
 
@@ -162,9 +160,6 @@ void initializePageRankVector(flt32 *pgRnkV, uns32 N) {
     for (uns32 i = 0; i < N; ++i)
         pgRnkV[i] = baseValue;
 }
-
-
-
 
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
 
@@ -175,10 +170,6 @@ void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, 
 
 
 }
-
-
-
-
 
 #else
 
@@ -209,8 +200,6 @@ void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, 
 
 
 }
-
-
 
 
 #endif
