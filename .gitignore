@@ -18,3 +18,5 @@ openmpver
 singlethread
 
 input.txt
+
+.vscode/

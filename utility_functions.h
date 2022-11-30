@@ -54,7 +54,7 @@ void smmOp(SparseMatrix *mA, SparseMatrix *mB, SparseMatrix *mC);
 void smvOp(SparseMatrix *mA, flt32 *dVB, flt32 *dVC);
 void hasConverged(flt32 *dVA, flt32 *dVB);
 void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N);
-
+void calculatePageRank2(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N);
 
 
 
