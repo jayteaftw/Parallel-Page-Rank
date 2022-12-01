@@ -34,10 +34,11 @@ int main(int argc, char * argv[])
 #ifdef OPEN_MP_PROJECT
         omp_set_num_threads(nthreads);
 #endif
+
+#ifdef CUDA_PROJECT
+        omp_set_num_threads(nthreads);
+#endif
     }
-    uns32 approach = 1;
-    if(argc == 6 && strcasecmp(argv[5], "2") == 0)
-        approach = 2;
     std::cout << "file: " << fileName << endl;
     std::cout << "number of nodes: " << N << endl;
     std::cout << "nthreads: " << nthreads << endl;   
@@ -99,14 +100,9 @@ int main(int argc, char * argv[])
     cout << "Calculating page rank..." << endl;
     flt32 *finalPgRankV = (flt32 *) malloc(sizeof(flt32) * N);
     memset(finalPgRankV, 0x0, sizeof(flt32)*N);
-    if(approach == 2) {
-        cout << "Calculating page rank using Sparse Matrix X Sparse Matrix..." << endl;
-        calculatePageRank2(&adjM, pgRankV, finalPgRankV, N);
-    }
-    else {
-        cout << "Calculating page rank using Dense Vector X Sparse Matrix only..." << endl;
-        calculatePageRank(&adjM, pgRankV, finalPgRankV, N);
-    }
+
+    cout << "Calculating page rank using Dense Vector X Sparse Matrix only..." << endl;
+    calculatePageRank(&adjM, pgRankV, finalPgRankV, N);
 
     stop = chrono::high_resolution_clock::now();
     duration = chrono::duration_cast<chrono::milliseconds>(stop - pause);

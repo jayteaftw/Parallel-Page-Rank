@@ -12,23 +12,19 @@
 
 #include "global_types.h"
 #include "sparse_matrix.h"
-#include "sparse_mat_mult.h"
+#include "cuda_page_rank.h"
 
 using namespace std;
 
 #define NodeInfo vector<uns32>
 
-
-// #define OPEN_MP_PROJECT
-
-// #define OPEN_ACC_PROJECT
-
+#include "omp.h"  
 
 #ifdef OPEN_MP_PROJECT
-#include "omp.h"
+    #include "omp.h"
 
-#elif defined(OPEN_ACC_PROJECT)
-#include "openacc.h"
+#elif defined(CUDA_PROJECT)
+      
 
 #else
 // single threaded
