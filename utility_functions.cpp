@@ -212,11 +212,10 @@ void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, 
             }
         }
     }  
+}
+
+void calculatePageRank2(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
     
-    
-
-
-
 }
 
 #else
@@ -246,6 +245,10 @@ void calculatePageRank(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, 
     SparseDenseMatMult(adjM,initPgRnkV,finPgRnkV,N);
 
 
+
+}
+
+void calculatePageRank2(SparseMatrix *adjM, flt32 *initPgRnkV, flt32 *finPgRnkV, uns32 N) {
 
 }
 
