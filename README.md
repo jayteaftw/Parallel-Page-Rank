@@ -23,6 +23,15 @@ OpenMP:
     '''
     ./openmpver [path to input file] [# of nodes] -t [# of threads] [approach(1-VectorMatrixOnly, 2-MatrixMatrix)]
     '''
+ Cuda:
+
+    '''
+    make cudaver
+    '''
+
+    '''
+    ./cudaver [path to input file] [# of nodes] -t [# of threads] [approach(1-VectorMatrixOnly, 2-MatrixMatrix)]
+    '''
 
 
 
